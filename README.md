@@ -6,12 +6,79 @@
 
 
 
-# 구현: 1. saga : 소스코드 복사해서 붙여넣기  (일부코드 복사)
+# 구현 : 1. saga : 소스코드 복사해서 붙여넣기  (일부코드 복사)
+
+```
+package food.deliverymy.infra;
+
+import javax.naming.NameParser;
+
+import javax.naming.NameParser;
+import javax.transaction.Transactional;
+
+import food.deliverymy.config.kafka.KafkaProcessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.stereotype.Service;
+import food.deliverymy.domain.*;
+
+@Service
+@Transactional
+public class PolicyHandler{
+    @Autowired OrderRepository orderRepository;
+    @Autowired PaymentRepository paymentRepository;
+    
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whatever(@Payload String eventString){}
+
+    @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='Rejected'")
+    public void wheneverRejected_CancelPayment(@Payload Rejected rejected){
+
+        Rejected event = rejected;
+        System.out.println("\n\n##### listener CancelPayment : " + rejected + "\n\n");
+
+        // Sample Logic //
+        Payment.cancelPayment(event);
+    }
+    
+    @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='OrderCanceled'")
+    public void wheneverOrderCanceled_CancelPayment(@Payload OrderCanceled orderCanceled){
+
+        OrderCanceled event = orderCanceled;
+        System.out.println("\n\n##### listener CancelPayment : " + orderCanceled + "\n\n");
+
+        // Sample Logic //
+        Payment.cancelPayment(event);        
+
+    }
+
+    @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='Accepted'")
+    public void wheneverAccepted_UpdateStatus(@Payload Accepted accepted){
+
+        Accepted event = accepted;
+        System.out.println("\n\n##### listener UpdateStatus : " + accepted + "\n\n");
+
+        // Sample Logic //
+        Order.updateStatus(event);
+    }
+    
+    @StreamListener(value=KafkaProcessor.INPUT, condition="headers['type']=='Rejected'")
+    public void wheneverRejected_UpdateStatus(@Payload Rejected rejected){
+
+        Rejected event = rejected;
+        System.out.println("\n\n##### listener UpdateStatus : " + rejected + "\n\n");
+
+        // Sample Logic //
+        Order.updateStatus(event);
+    }
+}
+```
 
 
-
-
-# 2. CQRS : 
+# 구현 : 2. CQRS : 
 ```
 package food.deliverymy.infra;
 
@@ -119,7 +186,7 @@ public class OrderStatusViewHandler {
 
 
 ```
-# 3. Compensation / Correlation : 소스 넣기
+# 구현 : 3. Compensation / Correlation : 소스 넣기
 
 ### StoreOrderRepository.java
 ```
