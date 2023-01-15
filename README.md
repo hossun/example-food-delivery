@@ -79,6 +79,9 @@ public class PolicyHandler{
 
 
 # 구현 : 2. CQRS : 
+
+![image](https://user-images.githubusercontent.com/8733715/212527690-4dd4d06d-7996-4d51-b6a3-f8dade8cc889.png)
+
 ```
 package food.deliverymy.infra;
 
