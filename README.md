@@ -121,7 +121,7 @@ public class OrderStatusViewHandler {
 ```
 # 3. Compensation / Correlation : 소스 넣기
 
-
+### StoreOrderRepository.java
 ```
 package food.deliverymy.domain;
 
@@ -138,6 +138,7 @@ public interface StoreOrderRepository extends PagingAndSortingRepository<StoreOr
 
 ```
 
+### StoreOrder.java
 ```
     public static void notifyOrderCancelled(OrderCanceled orderCanceled){
 
